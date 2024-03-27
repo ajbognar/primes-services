@@ -14,7 +14,8 @@ public class PrimesController {
     }
 
     @GetMapping("/{n}")
-    public boolean isPrime(@PathVariable Long n) {
+    public boolean isPrime(@PathVariable Long n)
+    {
         return primesService.isPrime(n);
     }
 }
