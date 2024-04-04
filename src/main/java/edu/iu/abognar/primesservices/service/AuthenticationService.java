@@ -19,13 +19,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.iu.abognar.primesservices.model.Customer;
+import edu.iu.abognar.primesservices.repository.AuthenticationDBRepository;
 import edu.iu.abognar.primesservices.repository.IAuthenticationRepository;
 
 @Service
 public class AuthenticationService implements IAuthenticationService, UserDetailsService{
-    IAuthenticationRepository authenticationRepository;
+    AuthenticationDBRepository authenticationRepository;
 
-    public AuthenticationService(IAuthenticationRepository authenticationRepository) {
+    public AuthenticationService(AuthenticationDBRepository authenticationRepository) {
         this.authenticationRepository = authenticationRepository;
     }
 
@@ -44,7 +45,7 @@ public class AuthenticationService implements IAuthenticationService, UserDetail
         }
 
         @PostMapping("/register")
-        public boolean register(@RequestBody Customer customer) {
+        public Customer register(@RequestBody Customer customer) {
             try {
                 return authenticationService.register(customer);
             } catch(IOException e) {
@@ -64,7 +65,7 @@ public class AuthenticationService implements IAuthenticationService, UserDetail
     }
 
     @Override
-    public boolean register(Customer customer) throws IOException {
+    public Customer register(Customer customer) throws IOException {
         BCryptPasswordEncoder bc = new BCryptPasswordEncoder();
         String passwordEncoded = bc.encode(customer.getPassword());
         customer.setPassword(passwordEncoded);
@@ -95,7 +96,7 @@ public class AuthenticationService implements IAuthenticationService, UserDetail
                 .withUsername(username)
                 .password(customer.getPassword())
                 .build();
-        } catch(IOException e) {
+        } catch(Exception e) {
             throw new RuntimeException(e);
         }
     }
